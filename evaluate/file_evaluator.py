@@ -16,11 +16,17 @@ class File_Evaluator():
         self.file_expected = None
         self.index_columns = index_columns
 
+    '''
+    파일의 존재여부를 확인합니다
+    '''
     def validate_check_file_exists(self):
         if not os.path.exists(self.file_path):
             return False, f"파일 {self.file_name}가 존재하지 않습니다."
         return True, None
-
+    '''
+    파일의 상태를 확인합니다.
+    읽을 수 없는 파일 또는 상태라면 에러를 발생시킵니다
+    '''
     def validate_read_files(self):
         try:
             self.file_got = pd.read_csv(self.file_path)
@@ -28,7 +34,9 @@ class File_Evaluator():
         except:
             return False, f"파일 {self.file_name}을 읽지 못했습니다. 이유: \n{sys.exc_info()[0]}"
         return True, None
-
+    '''
+    검증 메소드들을 통해 검증합니다
+    '''
     def validate(self):
         VALIDATION_FUNCTIONS = [
             self.validate_check_file_exists,
@@ -43,6 +51,9 @@ class File_Evaluator():
 
         return not messages, '\n'.join(messages)
 
+    '''
+    데이터를 채점방식에 알맞게 재구성합니다
+    '''
     def refine_dataframe_got(self):
         # column 갯수, 이름, 타입 일치 시키기, 필요없는 컬럼 제거하기
         if len(self.file_got.columns) == len(self.file_expected.columns) + 1:
@@ -56,6 +67,9 @@ class File_Evaluator():
             except:
                 pass
 
+    '''
+    채점방식에 필요한 메소드입니다
+    '''
     def calc_accuracy(self):
         n_row, n_col = self.file_expected.shape
         total = n_row * (n_col - len(self.index_columns))
@@ -65,10 +79,10 @@ class File_Evaluator():
             correct += (self.file_expected[col] == self.file_got[col]).sum()
         return 100 * correct / total
 
+    '''
+    채점 메소드를 사용하여 파일을 채점합니다.
+    '''
     def evaluate(self):
-        '''
-        파일을 검증합니다
-        '''
         valid, message = self.validate()
         if not valid or self.file_expected.shape[0] > self.file_got.shape[0]:
             return 0.0
@@ -80,7 +94,4 @@ class File_Evaluator():
         for col in self.index_columns:
             if (self.file_expected[col] != self.file_got[col]).sum():
                 return 0.0
-        '''
-        파일을 채점합니다
-        '''
         return self.calc_accuracy() 
