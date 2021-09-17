@@ -29,7 +29,7 @@ evaluate 디렉토리에는 정답 파일과 채점 python 파일을 넣습니�
 evaluate
 ㄴ 정답 csv 파일
 ㄴ evaluator.py
-ㄴ sample.py(evaluator를 위한 클래스, 메소드 제공) - 
+ㄴ sample.py(evaluator를 위한 클래스, 메소드 제공) - 굳이 따를 필요는 없음 
 ```
 
 #### 디렉토리 구조 설명
@@ -38,5 +38,12 @@ evaluate
 	* submission.csv 등의 정답 csv 파일
 * evaluator.py
 	* 유저가 제작한 csv 파일과 정답 csv 파일을 비교하여 채점하는 python 파일
-	* 문제에 따라 파일 이름이나 채점 방식이 달라지므로 `evaluator.py`의 내용은 문제별로 수정되어야 합니다.
-	* 파일을 어떻게 수정해야하는지는 파일 상단의 주석을 참고하세요.
+	* 유저가 제작한 csv 파일이 올바른 형식으로 작성되었는지 검증합니다.
+    (ex: file이 있는지 검사, column 개수가 맞는지 검사)
+	* 문제에 따라 파일 이름이나 채점 방식이 달라지므로 evaluate() 내용 알맞게 수정되어야 합니다.
+	(ex: accuracy, f1-score 등)
+	* 전역변수 수정은 파일 내부의 주석을 참고하세요.
+
+* sample.py
+	* 검증과 채점에 필요한 메소드들이 미리 클래스로 정의한 스크립트 파일입니다.
+	* 꼭, 이 파일을 사용할 필요는 없습니다. 직접 evaluator.py에 제작하셔도 됩니다.	
