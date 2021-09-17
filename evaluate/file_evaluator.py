@@ -15,12 +15,33 @@ class File_Evaluator():
         self.file_got = None
         self.file_expected = None
         self.index_columns = index_columns
+	'''
+    파일의 존재여부를 확인합니다
+    '''
+    def validate_check_file_exists(self):
+        if not os.path.exists(self.file_path):
+            return False, f"파일 {self.file_name}가 존재하지 않습니다."
+        return True, None
+    '''
+    파일의 상태를 확인합니다.
+    읽을 수 없는 파일 또는 상태라면 에러를 발생시킵니다
+    '''
+    def validate_read_files(self):
+        try:
+            self.file_got = pd.read_csv(self.file_path)
+            self.file_expected = pd.read_csv('.' + self.file_name)
+        except:
+            return False, f"파일 {self.file_name}을 읽지 못했습니다. 이유: \n{sys.exc_info()[0]}"
+        return True, None
 
     '''
     검증 메소드들을 통해 검증합니다
     '''
     def validate(self):
-        VALIDATION_FUNCTIONS = []
+		VALIDATION_FUNCTIONS = [
+            self.validate_check_file_exists,
+            self.validate_read_files, 
+        ]
         messages = []
         for check_function in VALIDATION_FUNCTIONS:
             valid, message = check_function()
